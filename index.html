@@ -1,0 +1,514 @@
+<!--
+  SCRAPBOOK LETTER — quick edits:
+  - Audio tracks: edit the PLAYLIST array in the script below.
+  - Letter text: replace the placeholder paragraphs inside #letter-content.
+  - Chibi decoration URLs: edit the DECORATIONS array in the script below.
+  - Color theme: adjust the warm paper, amber, and envelope color classes below.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5ecd7">
+  <title>A Little Letter for You</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #44372e;
+      --amber: #b77932;
+    }
+
+    body {
+      color: var(--ink);
+      font-family: "Special Elite", Georgia, serif;
+    }
+
+    .scrapbook-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-color: #f5ecd7;
+      /* Layer 2 (Front): Warm cream wash to soften the flowers */
+      background-image: linear-gradient(rgba(245, 236, 215, 0.85), rgba(245, 236, 215, 0.85)),
+        /* Layer 1 (Back): The detailed floral SVG */
+        url("data:image/svg+xml,%3Csvg width='300' height='300' viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill-opacity='0.35'%3E%3C!-- === LARGE TULIP (Top Left) === --%3E%3Cg fill='%23e8b4b8'%3E%3Cpath d='M40,90 C30,60 40,40 50,50 C55,40 65,40 70,50 C80,40 90,60 80,90 C70,95 50,95 40,90 Z'/%3E%3Cpath d='M45,85 C40,65 45,55 50,60 C55,55 65,55 70,60 C75,55 75,65 70,85 Z' fill='%23d4969b'/%3E%3C/g%3E%3Cg fill='%23a8bfa0'%3E%3Cpath d='M60,95 Q65,115 50,120 Q45,100 60,95 Z'/%3E%3Cpath d='M60,95 Q75,110 70,130 Q55,115 60,95 Z'/%3E%3C/g%3E%3C!-- === LOTUS (Bottom Right) === --%3E%3Cg fill='%23fdfaf3'%3E%3Cpath d='M220,240 C200,220 210,190 225,210 C230,190 250,190 260,210 C270,190 280,210 260,240 C250,245 230,245 220,240 Z'/%3E%3Cpath d='M225,235 C215,225 220,210 225,215 C230,210 240,210 245,215 C250,210 255,220 245,235 Z' fill='%23d4969b'/%3E%3Cpath d='M225,235 C220,220 230,215 235,225 C240,215 250,220 245,235 Z' fill='%23f0dfa0'/%3E%3C/g%3E%3C!-- === LARGE ROSE (Center Right) === --%3E%3Cg fill='%23e8b4b8'%3E%3Cpath d='M180,90 C170,70 185,55 195,65 C205,55 220,70 210,90 C225,100 210,115 195,105 C185,120 170,105 180,90 Z'/%3E%3C/g%3E%3Cg fill='%23d4969b'%3E%3Cpath d='M185,85 C180,75 185,70 190,75 C195,70 200,75 195,85 C200,90 195,95 190,90 C185,95 180,90 185,85 Z'/%3E%3C/g%3E%3C!-- === SMALL FILLER FLOWERS === --%3E%3Cg fill='%23a8bfa0'%3E%3Cpath d='M260,40 C255,30 265,20 275,30 C285,20 295,30 290,40 C295,50 285,60 275,50 C265,60 255,50 260,40 Z'/%3E%3Ccircle cx='275' cy='40' r='3' fill='%23f5ecd7'/%3E%3Cpath d='M60,260 C55,250 65,240 75,250 C85,240 95,250 90,260 C95,270 85,280 75,270 C65,280 55,270 60,260 Z'/%3E%3Ccircle cx='75' cy='260' r='3' fill='%23f5ecd7'/%3E%3C/g%3E%3C!-- === SCATTERED LEAVES & VINES === --%3E%3Cg fill='%23a8bfa0'%3E%3Cpath d='M120,60 Q140,50 130,70 Q110,80 120,60 Z'/%3E%3Cpath d='M150,160 Q170,150 160,170 Q140,180 150,160 Z'/%3E%3Cpath d='M80,180 Q100,170 90,190 Q70,200 80,180 Z'/%3E%3Cpath d='M240,160 Q260,170 250,180 Q230,190 240,160 Z'/%3E%3Cpath d='M140,250 Q160,260 150,270 Q130,280 140,250 Z'/%3E%3Cpath d='M40,160 Q60,170 50,180 Q30,190 40,160 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      background-size: 300px 300px;
+      background-repeat: repeat;
+
+      /* The MAGIC: soften the vector edges without exposing the layer boundary */
+      filter: blur(1.5px);
+      transform: scale(1.02);
+    }
+
+    .handwriting { font-family: "Caveat", cursive; }
+    .typewriter { font-family: "Special Elite", Georgia, serif; }
+    [hidden] { display: none !important; }
+    .letter-scroll {
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #c58a43 #f4ead8;
+    }
+    .letter-scroll::-webkit-scrollbar { width: 8px; }
+    .letter-scroll::-webkit-scrollbar-track { background: #f4ead8; border-radius: 999px; }
+    .letter-scroll::-webkit-scrollbar-thumb { background: #c58a43; border: 2px solid #f4ead8; border-radius: 999px; }
+    .letter-card {
+      background-color: #fdfaf3;
+      background-image: radial-gradient(#00000008 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    .letter-body > p,
+    .letter-body > .floral-divider {
+      position: relative;
+      z-index: 10;
+    }
+
+    .envelope-flap {
+      transform-origin: top center;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+  <div class="scrapbook-bg" aria-hidden="true"></div>
+  <div class="relative z-10 min-h-screen">
+  <main id="scrapbook" class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 md:py-14">
+    <!-- DECORATIONS: images are rendered from the editable array below. -->
+    <div id="decorations" aria-hidden="true" class="pointer-events-none absolute inset-0 z-10"></div>
+
+    <!-- ENVELOPE -->
+    <section id="envelope-scene" class="relative z-10 flex w-full max-w-md flex-col items-center transition-opacity">
+      <button id="open-envelope" type="button" aria-label="Open your letter"
+        class="group relative w-full rounded-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-500/60">
+        <div class="envelope-shell relative mx-auto aspect-[1.55/1] w-full max-w-md rotate-[-2deg] rounded-md bg-[#d9a875] shadow-2xl transition-transform duration-300 group-hover:rotate-[-1deg] group-hover:scale-[1.02]">
+          <div class="absolute inset-0 rounded-md bg-gradient-to-br from-[#e7bd91] via-[#d9a875] to-[#c98f5d]"></div>
+          <div class="absolute inset-x-0 bottom-0 h-[68%] rounded-b-md bg-[#d6a06e] [clip-path:polygon(0_100%,50%_0,100%_100%)]"></div>
+          <div class="envelope-flap absolute inset-x-0 top-0 z-10 h-[66%] bg-[#edc89e] [clip-path:polygon(0_0,100%_0,50%_100%)]"></div>
+          <div class="absolute inset-x-0 bottom-0 z-20 h-[68%] rounded-b-md bg-[#dca979] [clip-path:polygon(0_100%,50%_33%,100%_100%)]"></div>
+          <div class="wax-seal absolute left-1/2 top-[55%] z-30 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 rotate-[-7deg] items-center justify-center rounded-full border-4 border-[#a84e40] bg-[#be6050] text-xl text-[#f4d8ba] shadow-md md:h-16 md:w-16">
+            <span aria-hidden="true">♥</span>
+          </div>
+          <span class="absolute bottom-4 left-1/2 z-40 -translate-x-1/2 whitespace-nowrap handwriting text-2xl font-semibold text-[#fff7e9] drop-shadow md:text-3xl">Tap to open</span>
+        </div>
+      </button>
+      <p class="mt-5 handwriting text-xl text-[#795b42] md:text-2xl">A Little Letter for You</p>
+      <p id="audio-status" role="status" aria-live="polite" class="mt-2 min-h-5 text-center text-xs text-[#795b42]"></p>
+    </section>
+
+    <!-- LETTER -->
+    <div id="letter-shell" class="pointer-events-none absolute left-1/2 top-1/2 z-20 w-[calc(100%-2rem)] max-w-2xl opacity-0">
+      <button id="close-letter" type="button" aria-label="Close letter" hidden
+        class="absolute -right-1 -top-3 z-30 flex min-h-11 min-w-11 items-center justify-center rounded-full border border-amber-900/10 bg-amber-100 text-lg text-amber-900 shadow-md transition hover:bg-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m6 6 12 12M18 6 6 18"></path>
+        </svg>
+      </button>
+      <!--
+        Decorations: swap sprigs/tape colors by editing the inline SVG
+        fills or Tailwind bg- classes. All decorative elements are
+        pointer-events-none.
+      -->
+      <article id="letter-card" tabindex="-1" aria-label="A letter for you"
+        class="letter-card relative isolate max-h-[80vh] w-full overflow-x-hidden overflow-y-hidden rounded-sm bg-[#fdfaf3] shadow-xl shadow-stone-800/20 before:pointer-events-none before:absolute before:left-1/2 before:top-[-10px] before:z-0 before:h-6 before:w-28 before:-translate-x-1/2 before:rotate-[-3deg] before:border before:border-amber-900/10 before:bg-amber-100/70 before:content-['']">
+        <svg aria-hidden="true" viewBox="0 0 80 80" class="pointer-events-none absolute left-2 top-2 z-0 h-[50px] w-[50px] rotate-[-15deg] opacity-50 md:h-20 md:w-20 md:opacity-70">
+          <path d="M12 69C24 57 34 47 43 37S59 21 68 12" fill="none" stroke="#a8bfa0" stroke-linecap="round" stroke-width="2.5"/>
+          <path d="M25 57c-7-1-11-5-12-11 7 0 11 3 13 9m18-18c-7-1-10-5-11-11 7 0 10 3 12 9m16-13c-1-6-4-10-10-12 0 7 3 10 8 13" fill="#a8bfa0"/>
+          <g fill="#e8b4b8">
+            <circle cx="23" cy="57" r="3"/><circle cx="27" cy="60" r="3"/><circle cx="31" cy="57" r="3"/><circle cx="29" cy="52" r="3"/><circle cx="24" cy="52" r="3"/>
+            <circle cx="42" cy="38" r="3"/><circle cx="46" cy="41" r="3"/><circle cx="50" cy="38" r="3"/><circle cx="48" cy="33" r="3"/><circle cx="43" cy="33" r="3"/>
+            <circle cx="59" cy="20" r="3"/><circle cx="63" cy="23" r="3"/><circle cx="67" cy="20" r="3"/><circle cx="65" cy="15" r="3"/><circle cx="60" cy="15" r="3"/>
+          </g>
+          <g fill="#a8bfa0"><circle cx="27" cy="56" r="1.8"/><circle cx="46" cy="37" r="1.8"/><circle cx="63" cy="19" r="1.8"/></g>
+        </svg>
+        <svg aria-hidden="true" viewBox="0 0 80 80" class="pointer-events-none absolute right-2 top-2 z-0 h-[50px] w-[50px] rotate-[15deg] opacity-50 md:h-20 md:w-20 md:opacity-70">
+          <path d="M12 69C24 57 34 47 43 37S59 21 68 12" fill="none" stroke="#a8bfa0" stroke-linecap="round" stroke-width="2.5"/>
+          <path d="M25 57c-7-1-11-5-12-11 7 0 11 3 13 9m18-18c-7-1-10-5-11-11 7 0 10 3 12 9m16-13c-1-6-4-10-10-12 0 7 3 10 8 13" fill="#a8bfa0"/>
+          <g fill="#e8b4b8">
+            <circle cx="23" cy="57" r="3"/><circle cx="27" cy="60" r="3"/><circle cx="31" cy="57" r="3"/><circle cx="29" cy="52" r="3"/><circle cx="24" cy="52" r="3"/>
+            <circle cx="42" cy="38" r="3"/><circle cx="46" cy="41" r="3"/><circle cx="50" cy="38" r="3"/><circle cx="48" cy="33" r="3"/><circle cx="43" cy="33" r="3"/>
+            <circle cx="59" cy="20" r="3"/><circle cx="63" cy="23" r="3"/><circle cx="67" cy="20" r="3"/><circle cx="65" cy="15" r="3"/><circle cx="60" cy="15" r="3"/>
+          </g>
+          <g fill="#a8bfa0"><circle cx="27" cy="56" r="1.8"/><circle cx="46" cy="37" r="1.8"/><circle cx="63" cy="19" r="1.8"/></g>
+        </svg>
+        <svg aria-hidden="true" viewBox="0 0 80 80" class="pointer-events-none absolute bottom-2 left-2 z-0 h-[50px] w-[50px] rotate-[15deg] opacity-50 md:h-20 md:w-20 md:opacity-70">
+          <path d="M12 69C24 57 34 47 43 37S59 21 68 12" fill="none" stroke="#a8bfa0" stroke-linecap="round" stroke-width="2.5"/>
+          <path d="M25 57c-7-1-11-5-12-11 7 0 11 3 13 9m18-18c-7-1-10-5-11-11 7 0 10 3 12 9m16-13c-1-6-4-10-10-12 0 7 3 10 8 13" fill="#a8bfa0"/>
+          <g fill="#e8b4b8">
+            <circle cx="23" cy="57" r="3"/><circle cx="27" cy="60" r="3"/><circle cx="31" cy="57" r="3"/><circle cx="29" cy="52" r="3"/><circle cx="24" cy="52" r="3"/>
+            <circle cx="42" cy="38" r="3"/><circle cx="46" cy="41" r="3"/><circle cx="50" cy="38" r="3"/><circle cx="48" cy="33" r="3"/><circle cx="43" cy="33" r="3"/>
+            <circle cx="59" cy="20" r="3"/><circle cx="63" cy="23" r="3"/><circle cx="67" cy="20" r="3"/><circle cx="65" cy="15" r="3"/><circle cx="60" cy="15" r="3"/>
+          </g>
+          <g fill="#a8bfa0"><circle cx="27" cy="56" r="1.8"/><circle cx="46" cy="37" r="1.8"/><circle cx="63" cy="19" r="1.8"/></g>
+        </svg>
+        <svg aria-hidden="true" viewBox="0 0 80 80" class="pointer-events-none absolute bottom-2 right-2 z-0 h-14 w-14 rotate-[-15deg] opacity-50 md:h-24 md:w-24 md:opacity-70">
+          <path d="M12 69C24 57 34 47 43 37S59 21 68 12" fill="none" stroke="#a8bfa0" stroke-linecap="round" stroke-width="2.5"/>
+          <path d="M25 57c-7-1-11-5-12-11 7 0 11 3 13 9m18-18c-7-1-10-5-11-11 7 0 10 3 12 9m16-13c-1-6-4-10-10-12 0 7 3 10 8 13" fill="#a8bfa0"/>
+          <g fill="#e8b4b8">
+            <circle cx="23" cy="57" r="3"/><circle cx="27" cy="60" r="3"/><circle cx="31" cy="57" r="3"/><circle cx="29" cy="52" r="3"/><circle cx="24" cy="52" r="3"/>
+            <circle cx="42" cy="38" r="3"/><circle cx="46" cy="41" r="3"/><circle cx="50" cy="38" r="3"/><circle cx="48" cy="33" r="3"/><circle cx="43" cy="33" r="3"/>
+            <circle cx="59" cy="20" r="3"/><circle cx="63" cy="23" r="3"/><circle cx="67" cy="20" r="3"/><circle cx="65" cy="15" r="3"/><circle cx="60" cy="15" r="3"/>
+          </g>
+          <g fill="#a8bfa0"><circle cx="27" cy="56" r="1.8"/><circle cx="46" cy="37" r="1.8"/><circle cx="63" cy="19" r="1.8"/></g>
+        </svg>
+        <div aria-hidden="true" class="pointer-events-none absolute left-[-14px] top-1/2 z-0 h-6 w-24 rotate-[-6deg] border border-dashed border-amber-700/40 bg-amber-200/60"></div>
+        <div aria-hidden="true" class="pointer-events-none absolute bottom-6 right-[-10px] z-0 h-5 w-20 rotate-12 border border-dashed border-rose-700/30 bg-rose-200/60"></div>
+        <!-- Swap snoopy.webp here for any other PNG/GIF/WebP sticker — same folder (./assets/chibi/). -->
+        <img id="letter-sticker" src="./assets/chibi/snoopy.webp" alt="Snoopy sticker"
+          class="absolute top-3 right-3 w-16 md:w-20 rotate-6 drop-shadow-md pointer-events-none z-20">
+        <div aria-hidden="true" class="pointer-events-none absolute left-3 top-8 z-0 h-12 w-2 rotate-[8deg] rounded-full border-2 border-stone-400/80 sm:left-4"></div>
+        <div id="letter-content" tabindex="-1" class="letter-body letter-scroll relative z-10 max-h-[80vh] overflow-y-auto space-y-4 px-5 pt-20 pb-8 handwriting text-xl leading-relaxed text-[#3b3025] md:space-y-5 md:px-12 md:pt-16 md:pb-12 md:text-2xl">
+          <p class="greeting w-fit font-['Caveat'] text-2xl md:text-3xl">To Jai,</p>
+          <p class="flex items-center justify-center gap-2 font-['Caveat'] text-2xl tracking-wide text-[#c97b84] md:text-3xl">
+            <svg aria-hidden="true" viewBox="0 0 16 16" class="pointer-events-none h-4 w-4 shrink-0"><g fill="#e8b4b8"><circle cx="8" cy="3" r="2.2"/><circle cx="12" cy="6" r="2.2"/><circle cx="10.5" cy="11" r="2.2"/><circle cx="5.5" cy="11" r="2.2"/><circle cx="4" cy="6" r="2.2"/></g><circle cx="8" cy="7" r="1.5" fill="#a8bfa0"/></svg>
+            HAPPY BIRTHDAY!!!
+            <svg aria-hidden="true" viewBox="0 0 16 16" class="pointer-events-none h-4 w-4 shrink-0"><g fill="#e8b4b8"><circle cx="8" cy="3" r="2.2"/><circle cx="12" cy="6" r="2.2"/><circle cx="10.5" cy="11" r="2.2"/><circle cx="5.5" cy="11" r="2.2"/><circle cx="4" cy="6" r="2.2"/></g><circle cx="8" cy="7" r="1.5" fill="#a8bfa0"/></svg>
+          </p>
+          <div aria-hidden="true" class="floral-divider pointer-events-none relative z-10 my-4 flex items-center justify-center gap-3 opacity-70">
+            <span class="h-px flex-1 bg-[#a8bfa0]"></span>
+            <svg viewBox="0 0 32 20" class="h-5 w-8 shrink-0">
+              <path d="M16 17v-3m-1 1-5-2m7 2 5-2" fill="none" stroke="#8fa882" stroke-width="1.4" stroke-linecap="round"/>
+              <ellipse cx="10" cy="12" rx="3.3" ry="1.6" transform="rotate(22 10 12)" fill="#a8bfa0"/>
+              <ellipse cx="22" cy="12" rx="3.3" ry="1.6" transform="rotate(-22 22 12)" fill="#a8bfa0"/>
+              <g fill="#e8b4b8"><circle cx="16" cy="3" r="2.5"/><circle cx="20.5" cy="6" r="2.5"/><circle cx="18.8" cy="11" r="2.5"/><circle cx="13.2" cy="11" r="2.5"/><circle cx="11.5" cy="6" r="2.5"/></g>
+              <circle cx="16" cy="7" r="1.5" fill="#8fa882"/>
+            </svg>
+            <span class="h-px flex-1 bg-[#a8bfa0]"></span>
+          </div>
+          <p>Where do I begin? AHAHAHA andami ko gusto sabihin, but I don’t think a single letter would be enough to put them into words. You still probably hate me, but that is fine, I still wanted to do something special for your bday. I've been thinking kung ano ibibigay ko sayo for your bday, I had something other than this, but due to the constricts of time, sa December ko nalang ibibigay AHAHAHAH.</p>
+          <p>First, I hope you know how much I appreciate you. I hope you never lose that kindness you show to everyone and the way you're someone people can genuinely rely on. These are some of the things that I really admire about you. I hope you never forget how much of a difference you make in the lives of the people around you.</p>
+          <p>Sometimes, I still find myself looking back at the little things we used to do. Yung mga gabi na we’d spend hours sending each other reels, reacting to them, and finding ways to tease each other. The memories of completing It takes two and how you introduced me to hiking games in roblox. Alam ko na these might seem like ordinary things, but they're memories I hold close to my heart. I never really thought that something as simple as spending time together could become something I'd look back on with this much fondness.</p>
+          <p>I miss those moments. I miss how easy things used to feel between us, and alam ko naman na things aren’t the same anymore, but I'm still thankful that I got to experience those things with you. Its something I woudnt want to change about my past, the chance to know you and create those memories with you.</p>
+          <p>I also want you to know that I've come to understand something. Na kahit gaano ko ka gusto na mag work yung between us, I know I have no right to keep asking you to hold on, to keep trying, or to keep fighting for something when you’ve already been feeling tired for a while. I understand now that wanting something to work doesn’t automatically mean both people have to keep trying until it does, and kahit its super difficult for me to accept that, di ko rin gusto na it becomes something na nagpapahirap sayo.</p>
+          <p>I wont pretend that my feelings have simply disappeared, because honestly, they haven’t. You still hold a very special place in my heart, and I really don’t think that will change just because things between us have. I may not know what place I'll have in your life moving forward, but know that you'll always have a piece of my heart. A piece that will always be grateful for you, for the memories we made, and for the person you allowed me to know.</p>
+          <p>I hope life treats you kindly. I pray that you get to accomplish everything you’ve been working so hard for, that you get to visit all the places you want to visit in the future, and that you find happiness even in the smallest things. I pray that you continue to meet people who appreciate your kindness, who understands your heart, and remind you that deserve love and care.</p>
+          <p>And whenever life gets difficult, I pray you remember that you're someone capable of getting through more than you think, and I pray you never feel like you have to carry everything on your own. God will always be there for you when you need someone to run to (tas ako din syempre :> AHHAHA). I will always be someone who genuinely cares for you.</p>
+          <p>I don’t know what the future holds for us, and I don’t want to make promises or expectations out of a day that’s supposed to be about you. I just wanted you to know that somewhere along the way, you became someone incredibly important to me, and I'll always treasure how our paths crossed.</p>
+          <p>Thank you, jaiii, for the late night conversations, the random reels, the games, the little moments that became some of my favorite memories. I'll never get tired of thanking you for being someone I got to know this closely, I'll always be grateful for that.</p>
+          <p>I hope this birthday is filled with the happiness you deserve. Keep being the person that you are, and never lose the things that make you, you!</p>
+          <p>Happy birthday again! You will always be someone I'm glad to have found.</p>
+          <div aria-hidden="true" class="floral-divider pointer-events-none relative z-10 my-4 flex items-center justify-center gap-3 opacity-70">
+            <span class="h-px flex-1 bg-[#a8bfa0]"></span>
+            <svg viewBox="0 0 32 20" class="h-5 w-8 shrink-0">
+              <path d="M16 17v-3m-1 1-5-2m7 2 5-2" fill="none" stroke="#8fa882" stroke-width="1.4" stroke-linecap="round"/>
+              <ellipse cx="10" cy="12" rx="3.3" ry="1.6" transform="rotate(22 10 12)" fill="#a8bfa0"/>
+              <ellipse cx="22" cy="12" rx="3.3" ry="1.6" transform="rotate(-22 22 12)" fill="#a8bfa0"/>
+              <g fill="#e8b4b8"><circle cx="16" cy="3" r="2.5"/><circle cx="20.5" cy="6" r="2.5"/><circle cx="18.8" cy="11" r="2.5"/><circle cx="13.2" cy="11" r="2.5"/><circle cx="11.5" cy="6" r="2.5"/></g>
+              <circle cx="16" cy="7" r="1.5" fill="#8fa882"/>
+            </svg>
+            <span class="h-px flex-1 bg-[#a8bfa0]"></span>
+          </div>
+          <p class="signature mt-6 text-right font-['Caveat'] text-xl">Always, with love,<br>Ian</p>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <!-- AUDIO CONTROLS -->
+  <audio id="letter-audio" preload="none"></audio>
+  <aside aria-label="Music controls" class="fixed bottom-4 right-3 z-50 flex w-[min(280px,calc(100vw-1.5rem))] max-w-[280px] flex-col gap-1 rounded-md border border-amber-900/10 bg-[#fffaf0]/95 px-3 py-2 shadow-lg shadow-stone-800/15 before:absolute before:left-1/2 before:top-[-8px] before:h-4 before:w-16 before:-translate-x-1/2 before:rotate-[-3deg] before:border before:border-black/10 before:bg-amber-100/70 before:content-[''] sm:bottom-6 sm:right-6 sm:w-auto sm:max-w-md sm:flex-row sm:items-center sm:gap-2 sm:px-4">
+    <div class="flex items-center justify-center gap-1 sm:contents">
+      <button id="previous-track" type="button" aria-label="Previous track"
+        class="flex min-h-11 min-w-11 items-center justify-center rounded-full bg-amber-100 p-2 text-amber-800 shadow-md transition hover:bg-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 5v14m13-14L8 12l11 7V5Z"></path>
+        </svg>
+      </button>
+      <button id="play-pause" type="button" aria-label="Play music" aria-pressed="false"
+        class="flex min-h-11 min-w-11 items-center justify-center rounded-full bg-amber-100 p-2 text-amber-800 shadow-md transition hover:bg-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600">
+        <svg id="play-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8 5 12 7-12 7V5Z"></path>
+        </svg>
+        <svg id="pause-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="hidden h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 5v14m8-14v14"></path>
+        </svg>
+      </button>
+      <button id="next-track" type="button" aria-label="Next track"
+        class="flex min-h-11 min-w-11 items-center justify-center rounded-full bg-amber-100 p-2 text-amber-800 shadow-md transition hover:bg-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 5v14M5 5l11 7-11 7V5Z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="flex min-w-0 items-center gap-1 sm:contents">
+      <button id="mute-toggle" type="button" aria-label="Mute music" aria-pressed="false"
+        class="flex min-h-11 min-w-11 items-center justify-center rounded-full bg-amber-100 p-2 text-amber-800 shadow-md transition hover:bg-amber-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600">
+        <svg id="speaker-on" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.5 8.5a5 5 0 0 1 0 7m2.8-9.8a9 9 0 0 1 0 12.6"></path>
+        </svg>
+        <svg id="speaker-off" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="hidden h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5 6 9H3v6h3l5 4V5Zm5 4 5 6m0-6-5 6"></path>
+        </svg>
+      </button>
+      <label for="volume" class="sr-only">Music volume</label>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.01" aria-label="Music volume"
+        class="h-2 w-20 shrink-0 cursor-pointer accent-amber-600 sm:w-24">
+      <span id="current-track" class="typewriter min-w-0 flex-1 truncate text-xs text-amber-900 sm:max-w-28" aria-live="polite"></span>
+    </div>
+  </aside>
+  </div>
+
+  <script>
+    // DECORATIONS CONFIG
+    // To change a chibi: edit src (URL to your GIF/PNG), alt (description),
+    // size (px), rotate (degrees), position (see list), tape (true/false).
+    // Supported positions: top-left, top-right, mid-left, mid-right, bottom-left, bottom-right.
+    const DECORATIONS = [
+      { id: "chibi-1", src: "./assets/chibi/amor-love.gif", alt: "Love-themed chibi sticker", position: "top-left", size: 120, rotate: -8, tape: true },
+      { id: "chibi-2", src: "./assets/chibi/giving-gift-snoopy.webp", alt: "Snoopy with a flower", position: "top-right", size: 100, rotate: 6, tape: false },
+      { id: "chibi-3", src: "./assets/chibi/snoopy-sticker-snoopy.gif", alt: "Snoopy giving a gift", position: "bottom-left", size: 140, rotate: -4, tape: true }
+    ];
+
+    // Edit src to point to your files. Add more entries to grow the playlist. The loop wraps automatically.
+    const PLAYLIST = [
+      { id: "track-1", src: "./assets/audio/Arctic Monkeys - No. 1 Party Anthem.mp3", title: "No. 1 Party Anthem" },
+      { id: "track-2", src: "./assets/audio/The 1975 - About You (Official).mp3", title: "About You" }
+    ];
+
+    const POSITIONS = {
+      "top-left": "top-4 left-4 md:top-8 md:left-8",
+      "top-right": "top-4 right-4 md:top-8 md:right-8",
+      "mid-left": "top-1/2 left-2 -translate-y-1/2 md:left-8",
+      "mid-right": "top-1/2 right-2 -translate-y-1/2 md:right-8",
+      "bottom-left": "bottom-8 left-4 md:bottom-12 md:left-8",
+      "bottom-right": "bottom-8 right-4 md:bottom-12 md:right-8"
+    };
+
+    const decorationLayer = document.getElementById("decorations");
+    // Add any of: .gif, .webp, .png, .jpg, .mp4, .webm — the renderer picks <img> or <video> automatically. To swap, edit src only.
+    DECORATIONS.forEach((decoration, index) => {
+      const wrapper = document.createElement("div");
+      wrapper.id = decoration.id;
+      wrapper.className = `pointer-events-none absolute max-w-[min(60vw,var(--mobile-size))] md:max-w-[var(--decoration-size)] max-sm:scale-75 ${POSITIONS[decoration.position] || POSITIONS["top-left"]} ${decoration.tape ? "before:absolute before:-top-2 before:left-1/2 before:z-10 before:h-5 before:w-16 before:-translate-x-1/2 before:rotate-[-3deg] before:border before:border-black/10 before:bg-gray-300/50 before:content-['']" : ""}`;
+      wrapper.style.width = `${decoration.size}px`;
+      wrapper.style.setProperty("--decoration-size", `${decoration.size}px`);
+      wrapper.style.setProperty("--mobile-size", `${Math.round(decoration.size * 0.6)}px`);
+      wrapper.style.transform = `rotate(${decoration.rotate}deg)`;
+      wrapper.dataset.decorationIndex = String(index);
+
+      const src = decoration.src;
+      const isVideo = /\.(mp4|webm)(\?|$)/i.test(src);
+      const mediaClass = "block h-auto w-full rounded-sm object-contain drop-shadow-md";
+      if (isVideo) {
+        const video = document.createElement("video");
+        video.src = src;
+        video.setAttribute("aria-label", decoration.alt);
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = "none";
+        video.className = mediaClass;
+        video.onerror = () => wrapper.remove();
+        wrapper.appendChild(video);
+      } else {
+        const image = document.createElement("img");
+        image.src = src;
+        image.alt = decoration.alt;
+        image.loading = "lazy";
+        image.draggable = false;
+        image.className = mediaClass;
+        image.onerror = () => wrapper.remove();
+        wrapper.appendChild(image);
+      }
+      decorationLayer.appendChild(wrapper);
+    });
+
+    const letterAudio = document.getElementById("letter-audio");
+    const currentTrackLabel = document.getElementById("current-track");
+    let currentIndex = 0;
+    letterAudio.src = PLAYLIST[currentIndex].src;
+    letterAudio.loop = true;
+    currentTrackLabel.textContent = PLAYLIST[currentIndex].title;
+
+    // ENVELOPE interaction and reveal sequence
+    const openButton = document.getElementById("open-envelope");
+    const envelopeScene = document.getElementById("envelope-scene");
+    const letterShell = document.getElementById("letter-shell");
+    const letterCard = document.getElementById("letter-card");
+    const letterContent = document.getElementById("letter-content");
+    const letterSticker = document.getElementById("letter-sticker");
+    letterSticker.onerror = () => letterSticker.remove();
+    const closeButton = document.getElementById("close-letter");
+    const audioStatus = document.getElementById("audio-status");
+    const letterParagraphs = gsap.utils.toArray("#letter-content > p");
+    let isOpen = false;
+    let isAnimating = false;
+    let decorationFloat;
+    gsap.set(letterShell, { xPercent: -50, yPercent: -50, rotation: -1, scale: 0.88 });
+
+    function openLetter() {
+      if (isOpen || isAnimating) return;
+      isAnimating = true;
+      letterContent.scrollTop = 0;
+      openButton.disabled = true;
+      gsap.killTweensOf(letterShell);
+      gsap.set(letterShell, { xPercent: -50, yPercent: -50, x: 0, y: 0, rotation: -1, scale: 0.78, opacity: 0 });
+      gsap.set(".envelope-flap", { rotateX: 0, scaleY: 1 });
+      gsap.set(".wax-seal", { scale: 1, opacity: 1 });
+      gsap.set(envelopeScene, { opacity: 1, scale: 1 });
+      gsap.set(letterParagraphs, { opacity: 0, y: 12 });
+      gsap.set("#decorations > div", { opacity: 0.72, y: 0 });
+
+      const playback = letterAudio.play();
+      if (playback) {
+        playback.catch(() => {
+          audioStatus.textContent = "The letter is open; music could not be played. Check the audio files or your browser settings.";
+        });
+      }
+
+      const timeline = gsap.timeline({
+        defaults: { ease: "power2.out" },
+        onComplete: () => {
+          letterShell.classList.remove("pointer-events-none");
+          closeButton.hidden = false;
+          gsap.set(closeButton, { autoAlpha: 1 });
+          isOpen = true;
+          isAnimating = false;
+          letterContent.scrollTop = 0;
+          closeButton.focus({ preventScroll: true });
+        }
+      });
+
+      timeline.to(".envelope-flap", { rotateX: 180, scaleY: 0.15, duration: 0.42, transformOrigin: "top center" })
+        .to(".wax-seal", { scale: 0.2, opacity: 0, duration: 0.22 }, "<0.08")
+        .to(letterShell, { opacity: 1, scale: 1, y: -12, duration: 0.62, onStart: () => letterShell.classList.remove("pointer-events-none") }, "-=0.1")
+        .to(letterShell, { y: 0, duration: 0.18 }, "<0.4")
+        .fromTo(letterParagraphs, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.045 }, "-=0.38")
+        .to(envelopeScene, { opacity: 0, scale: 0.82, duration: 0.42 }, "-=0.3")
+        .fromTo("#decorations > div", { y: 8, opacity: 0.7 }, { y: 0, opacity: 1, duration: 0.35, stagger: 0.08 }, "-=0.38");
+
+      decorationFloat = gsap.to("#decorations > div", {
+        y: "-=5",
+        duration: 2.2,
+        ease: "sine.inOut",
+        stagger: { each: 0.25, yoyo: true, repeat: -1 }
+      });
+    }
+
+    function closeLetter() {
+      if (!isOpen || isAnimating) return;
+      isAnimating = true;
+      letterAudio.pause();
+      letterContent.scrollTop = 0;
+      if (decorationFloat) decorationFloat.kill();
+
+      const shellRect = letterShell.getBoundingClientRect();
+      const envelopeRect = document.querySelector(".envelope-shell").getBoundingClientRect();
+      const xToEnvelope = envelopeRect.left + envelopeRect.width / 2 - (shellRect.left + shellRect.width / 2);
+      const yToEnvelope = envelopeRect.top + envelopeRect.height / 2 - (shellRect.top + shellRect.height / 2);
+
+      gsap.timeline({
+        defaults: { ease: "power2.in" },
+        onComplete: () => {
+          letterShell.classList.add("pointer-events-none");
+          closeButton.hidden = true;
+          gsap.set(closeButton, { clearProps: "all" });
+          gsap.set(letterShell, { xPercent: -50, yPercent: -50, x: 0, y: 0, rotation: -1, scale: 0.88, opacity: 0 });
+          gsap.set(".envelope-flap", { rotateX: 0, scaleY: 1 });
+          gsap.set(".wax-seal", { scale: 1, opacity: 1 });
+          gsap.set(".envelope-shell", { clearProps: "transform" });
+          gsap.set(envelopeScene, { opacity: 1, scale: 1 });
+          gsap.set(letterParagraphs, { clearProps: "opacity,transform" });
+          gsap.set("#decorations > div", { opacity: 0.82, y: 0 });
+          openButton.disabled = false;
+          isOpen = false;
+          isAnimating = false;
+          openButton.focus({ preventScroll: true });
+        }
+      })
+        .to(closeButton, { autoAlpha: 0, duration: 0.12 })
+        .to(letterShell, { x: xToEnvelope, y: yToEnvelope, scale: 0.12, opacity: 0, duration: 0.68 }, "<")
+        .to(envelopeScene, { opacity: 1, scale: 1, duration: 0.48 }, "<0.18")
+        .to(".envelope-flap", { rotateX: 0, scaleY: 1, duration: 0.58, transformOrigin: "top center" }, "<0.08")
+        .to(".wax-seal", { scale: 1, opacity: 1, duration: 0.3 }, "<0.18")
+        .to("#decorations > div", { opacity: 0.82, duration: 0.35, stagger: 0.04 }, "<");
+    }
+
+    openButton.addEventListener("click", openLetter);
+    closeButton.addEventListener("click", closeLetter);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeLetter();
+    });
+
+    function setupAudioControls() {
+      const previousButton = document.getElementById("previous-track");
+      const playPauseButton = document.getElementById("play-pause");
+      const nextButton = document.getElementById("next-track");
+      const muteToggle = document.getElementById("mute-toggle");
+      const volumeSlider = document.getElementById("volume");
+      const speakerOn = document.getElementById("speaker-on");
+      const speakerOff = document.getElementById("speaker-off");
+      const playIcon = document.getElementById("play-icon");
+      const pauseIcon = document.getElementById("pause-icon");
+
+      function updatePlaybackControl() {
+        const isPlaying = !letterAudio.paused;
+        playPauseButton.setAttribute("aria-pressed", String(isPlaying));
+        playPauseButton.setAttribute("aria-label", isPlaying ? "Pause music" : "Play music");
+        playIcon.classList.toggle("hidden", isPlaying);
+        pauseIcon.classList.toggle("hidden", !isPlaying);
+      }
+
+      function playCurrentTrack() {
+        const playback = letterAudio.play();
+        if (playback) {
+          playback.catch(() => {
+            audioStatus.textContent = "The letter is open; music could not be played. Check the audio files or your browser settings.";
+          });
+        }
+      }
+
+      function changeTrack(direction) {
+        currentIndex = (currentIndex + direction + PLAYLIST.length) % PLAYLIST.length;
+        const volume = letterAudio.volume;
+        const muted = letterAudio.muted;
+        letterAudio.src = PLAYLIST[currentIndex].src;
+        letterAudio.load();
+        letterAudio.volume = volume;
+        letterAudio.muted = muted;
+        currentTrackLabel.textContent = PLAYLIST[currentIndex].title;
+        playCurrentTrack();
+      }
+
+      previousButton.addEventListener("click", () => changeTrack(-1));
+      nextButton.addEventListener("click", () => changeTrack(1));
+      playPauseButton.addEventListener("click", () => {
+        if (letterAudio.paused) playCurrentTrack();
+        else letterAudio.pause();
+      });
+      letterAudio.addEventListener("play", updatePlaybackControl);
+      letterAudio.addEventListener("pause", updatePlaybackControl);
+
+      muteToggle.addEventListener("click", () => {
+        letterAudio.muted = !letterAudio.muted;
+        muteToggle.setAttribute("aria-pressed", String(letterAudio.muted));
+        muteToggle.setAttribute("aria-label", letterAudio.muted ? "Unmute music" : "Mute music");
+        speakerOn.classList.toggle("hidden", letterAudio.muted);
+        speakerOff.classList.toggle("hidden", !letterAudio.muted);
+      });
+
+      volumeSlider.addEventListener("input", (event) => {
+        letterAudio.volume = Number(event.currentTarget.value);
+      });
+      letterAudio.volume = Number(volumeSlider.value);
+      updatePlaybackControl();
+    }
+
+    setupAudioControls();
+  </script>
+</body>
+</html>
